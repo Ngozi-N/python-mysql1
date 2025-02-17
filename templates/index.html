@@ -1,0 +1,126 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask REST API UI</title>
+    <style>
+        /* General Styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        h2 {
+            color: #555;
+        }
+
+        /* Form Styling */
+        form {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        input {
+            padding: 8px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        /* Data List Styling */
+        ul {
+            list-style: none;
+            padding: 0;
+            max-width: 400px;
+            margin: auto;
+        }
+
+        li {
+            background: white;
+            margin: 8px 0;
+            padding: 10px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+<h1>Flask REST API UI</h1>
+
+<h2>Insert Record</h2>
+<form id="insertForm">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required>
+    <button type="button" onclick="insertRecord()">Insert Record</button>
+</form>
+
+<h2>View Data</h2>
+<ul id="dataList"></ul>
+
+<script>
+    function insertRecord() {
+        const name = document.getElementById('name').value;
+        fetch('/insert_record', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 'name': name }),
+        })
+        .then(response => response.text())
+        .then(data => {
+            alert(data);
+            loadData();
+        });
+    }
+
+    function loadData() {
+        fetch('/data')
+        .then(response => response.json())
+        .then(data => {
+            const dataList = document.getElementById('dataList');
+            dataList.innerHTML = '';
+            data.forEach(record => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `ID: ${record.id}, Name: ${record.name}`;
+                dataList.appendChild(listItem);
+            });
+        });
+    }
+
+    // Load initial data when the page is loaded
+    loadData();
+</script>
+
+</body>
+</html>
